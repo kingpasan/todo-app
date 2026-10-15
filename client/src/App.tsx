@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Button } from "./components/ui/button";
 
 type PingResponse = {
   status: string;
@@ -24,6 +25,7 @@ const App = () => {
     <main>
       <h1 className="bg-amber-400">Todo App - Pasan Semage</h1>
       <p>{ping?.message ?? "Connecting to API..."}</p>
+      <Button>Hello World</Button>
     </main>
   );
 };
