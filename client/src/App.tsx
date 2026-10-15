@@ -193,6 +193,7 @@ const App = () => {
             />
             <div className="grid items-stretch gap-5 xl:grid-cols-[minmax(330px,0.78fr)_minmax(0,1.5fr)]">
               <TodoForm
+                key={editingTodo?._id ?? "new-task"}
                 editingTodo={editingTodo}
                 onSubmit={handleSave}
                 onCancel={() => setEditingTodo(null)}

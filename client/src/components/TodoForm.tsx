@@ -134,28 +134,23 @@ const TodoForm = ({ editingTodo, onSubmit, onCancel }: TodoFormProps) => {
             </p>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-row justify-center gap-2">
             {editingTodo && (
               <Button
-                type="button"
                 variant="outline"
                 onClick={onCancel}
-                className="h-12 rounded-xl"
+                className="h-12 flex flex-1"
               >
-                <X className="mr-2 h-4 w-4" />
+                <X />
                 Cancel
               </Button>
             )}
-
             <Button
               type="submit"
-              className="h-12 flex-1 rounded-xl text-base font-semibold"
+              variant={"default"}
+              className="h-12 flex flex-2"
             >
-              {editingTodo ? (
-                <Check className="mr-2 h-5 w-5" />
-              ) : (
-                <Plus className="mr-2 h-5 w-5" />
-              )}
+              {editingTodo ? <Check /> : <Plus />}
 
               {editingTodo ? "Save changes" : "Add Task"}
             </Button>
