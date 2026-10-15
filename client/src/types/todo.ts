@@ -14,3 +14,11 @@ export type CreateTodoInput = {
   title: string;
   description: string;
 };
+
+export type ApiResponse<T> = {
+  success: boolean;
+  data: T;
+  message?: string;
+};
+
+export type UpdateTodoInput = Partial<CreateTodoInput>;
