@@ -22,7 +22,7 @@ const App = () => {
 
   return (
     <main>
-      <h1>Todo App - Pasan Semage</h1>
+      <h1 className="bg-amber-400">Todo App - Pasan Semage</h1>
       <p>{ping?.message ?? "Connecting to API..."}</p>
     </main>
   );
