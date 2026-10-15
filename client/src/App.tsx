@@ -1,11 +1,19 @@
 import { useMemo, useState } from "react";
-import type { CreateTodoInput, Page, Todo, TodoFilter } from "./types/todo";
+import type {
+  CreateTodoInput,
+  Page,
+  SortOrder,
+  Todo,
+  TodoFilter,
+} from "./types/todo";
 import AppSidebar from "@/components/layout/AppSidebar";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 import SummaryCards from "@/components/SummaryCards";
 import TodoForm from "@/components/TodoForm";
 import { todoApi } from "@/services/todoApi";
 import AlertDialog from "./components/AlertDialog";
+import { ListTodo } from "lucide-react";
+import TodoSortOrder from "./components/TodoSortOrder";
 
 const App = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -18,6 +26,7 @@ const App = () => {
     message: string;
     showAlert: boolean;
   } | null>();
+  const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
 
   const handleNavigate = (page: Page) => {
     setCurrentPage(page);
@@ -97,6 +106,29 @@ const App = () => {
                 onSubmit={handleSave}
                 onCancel={() => setEditingTodo(null)}
               />
+              <section className="min-w-0 rounded-lg border border-white bg-white p-5 shadow-sm sm:p-6">
+                <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                  <div className="flex items-center gap-3">
+                    <div className="grid h-11 w-11 place-items-center rounded-full bg-slate-100 text-slate-600">
+                      <ListTodo className="h-5 w-5" />
+                    </div>
+
+                    <div>
+                      <h2 className="text-xl font-bold tracking-tight">
+                        My Tasks
+                      </h2>
+                      <p className="mt-1 text-sm text-slate-500">
+                        Manage and organize your tasks.
+                      </p>
+                    </div>
+                  </div>
+
+                  <TodoSortOrder
+                    value={sortOrder}
+                    onValueChange={(value) => setSortOrder(value as SortOrder)}
+                  />
+                </div>
+              </section>
             </div>
           </main>
         </div>
