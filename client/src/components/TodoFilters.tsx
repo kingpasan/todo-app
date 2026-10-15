@@ -4,6 +4,7 @@ type TodoFiltersProps = {
   filter: TodoFilter;
   counts: {
     all: number;
+    today: number;
     active: number;
     completed: number;
   };
@@ -16,6 +17,7 @@ const filters: {
   countKey: keyof TodoFiltersProps["counts"];
 }[] = [
   { value: "All", label: "All", countKey: "all" },
+  { value: "Today", label: "Today", countKey: "today" },
   { value: "Active", label: "Active", countKey: "active" },
   { value: "Completed", label: "Completed", countKey: "completed" },
 ];

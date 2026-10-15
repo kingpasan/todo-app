@@ -37,20 +37,38 @@ const App = () => {
     if (page === "completed") {
       setFilter("Completed");
     } else if (page === "today") {
-      setFilter("Active");
+      setFilter("Today");
     } else if (page === "tasks") {
       setFilter("All");
     }
   };
 
-  const counts = useMemo(
-    () => ({
+  const counts = useMemo(() => {
+    const now = new Date();
+
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    ).getTime();
+
+    const startOfTomorrow = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+    ).getTime();
+
+    return {
       all: todos.length,
       active: todos.filter((todo) => !todo.done).length,
       completed: todos.filter((todo) => todo.done).length,
-    }),
-    [todos],
-  );
+      today: todos.filter((todo) => {
+        const createdAt = new Date(todo.createdAt).getTime();
+
+        return createdAt >= startOfToday && createdAt < startOfTomorrow;
+      }).length,
+    };
+  }, [todos]);
 
   const handleSave = async (data: CreateTodoInput) => {
     try {
@@ -85,15 +103,32 @@ const App = () => {
   const visibleTodos = useMemo(() => {
     const query = search.trim().toLowerCase();
 
+    const now = new Date();
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    ).getTime();
+
+    const startOfTomorrow = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+    ).getTime();
+
     const filtered = todos.filter((todo) => {
       const matchesSearch =
         todo.title.toLowerCase().includes(query) ||
-        todo.description.toLowerCase().includes(query);
+        (todo.description ?? "").toLowerCase().includes(query);
 
       const matchesFilter =
         filter === "All" ||
         (filter === "Active" && !todo.done) ||
-        (filter === "Completed" && todo.done);
+        (filter === "Completed" && todo.done) ||
+        (filter === "Today" &&
+          new Date(todo.createdAt).getTime() >= startOfToday &&
+          new Date(todo.createdAt).getTime() < startOfTomorrow);
+
       return matchesSearch && matchesFilter;
     });
 

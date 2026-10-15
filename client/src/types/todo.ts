@@ -1,5 +1,5 @@
 export type Page = "tasks" | "today" | "completed";
-export type TodoFilter = "All" | "Active" | "Completed";
+export type TodoFilter = "All" | "Active" | "Today" | "Completed";
 export type SortOrder = "newest" | "oldest";
 
 export type Todo = {
