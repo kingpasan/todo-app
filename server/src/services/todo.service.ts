@@ -29,4 +29,21 @@ const updateExistingTodo = async (
   return todo;
 };
 
-export { NotFoundError, getAllTodos, createNewTodo, updateExistingTodo };
+const toggleStatus = async (id: string) => {
+  const todo = await Todo.findById(id);
+
+  if (!todo) throw new NotFoundError();
+
+  todo.done = !todo.done;
+  await todo.save();
+
+  return todo;
+};
+
+export {
+  NotFoundError,
+  getAllTodos,
+  createNewTodo,
+  updateExistingTodo,
+  toggleStatus,
+};

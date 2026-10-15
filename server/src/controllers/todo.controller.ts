@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import {
   createNewTodo,
   getAllTodos,
+  toggleStatus,
   updateExistingTodo,
 } from "../services/todo.service";
 import {
@@ -35,6 +36,17 @@ export const updateTodo: RequestHandler = async (req, res, next) => {
     const id = todoIdSchema.parse(req.params.id);
     const data = updateTodoSchema.parse(req.body);
     const todo = await updateExistingTodo(id, data);
+
+    res.status(200).json({ success: true, data: todo });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const toggleTodoStatus: RequestHandler = async (req, res, next) => {
+  try {
+    const id = todoIdSchema.parse(req.params.id);
+    const todo = await toggleStatus(id);
 
     res.status(200).json({ success: true, data: todo });
   } catch (error) {
