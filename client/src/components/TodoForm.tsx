@@ -4,15 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { Todo, CreateTodoInput } from "@/types/todo";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import AlertDialog from "./AlertDialog";
 
 type TodoFormProps = {
   editingTodo: Todo | null;
@@ -73,37 +65,14 @@ const TodoForm = ({ editingTodo, onSubmit, onCancel }: TodoFormProps) => {
 
   return (
     <>
-      <Dialog
+      <AlertDialog
         open={error.showAlert}
         onOpenChange={(open) =>
           setError((prev) => ({ ...prev, showAlert: open }))
         }
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Something went wrong</DialogTitle>
-
-            <DialogDescription className="text-sm text-slate-500">
-              We couldn't complete your request.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div
-            role="alert"
-            className="rounded border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-700"
-          >
-            {error.message}
-          </div>
-
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" className="w-full">
-                OK
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        title={editingTodo ? "Update Task" : "Create New Task"}
+        message={error.message}
+      />
 
       <section className="rounded-lg border border-white bg-white p-5 shadow-sm sm:p-6">
         <div className="mb-6 flex items-start gap-3">
@@ -180,7 +149,7 @@ const TodoForm = ({ editingTodo, onSubmit, onCancel }: TodoFormProps) => {
 
             <Button
               type="submit"
-              className="h-12 flex-1 rounded-xl bg-blue-600 text-base font-semibold shadow-md shadow-blue-100 hover:bg-blue-700"
+              className="h-12 flex-1 rounded-xl text-base font-semibold"
             >
               {editingTodo ? (
                 <Check className="mr-2 h-5 w-5" />
