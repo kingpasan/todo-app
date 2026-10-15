@@ -1,32 +1,29 @@
-import { useEffect, useState } from "react";
-import { Button } from "./components/ui/button";
-
-type PingResponse = {
-  status: string;
-  message: string;
-};
+import { useState } from "react";
+import AppSidebar from "./components/layout/AppSidebar";
+import type { Page, TodoFilter } from "./types/todo";
 
 const App = () => {
-  const [ping, setPing] = useState<PingResponse | null>(null);
+  const [currentPage, setCurrentPage] = useState<Page>("tasks");
+  const [filter, setFilter] = useState<TodoFilter>("All");
 
-  useEffect(() => {
-    fetch("/api/ping")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("API request failed");
-        }
-        return response.json() as Promise<PingResponse>;
-      })
-      .then(setPing)
-      .catch(console.error);
-  }, []);
+  const handleNavigate = (page: Page) => {
+    setCurrentPage(page);
 
+    if (page === "completed") {
+      setFilter("Completed");
+    } else if (page === "today") {
+      setFilter("Active");
+    } else if (page === "tasks") {
+      setFilter("All");
+    }
+  };
   return (
-    <main>
-      <h1 className="bg-amber-400">Todo App - Pasan Semage</h1>
-      <p>{ping?.message ?? "Connecting to API..."}</p>
-      <Button>Hello World</Button>
-    </main>
+    <div className="min-h-screen bg-[#fefef5] text-slate-900">
+      <div className="mx-auto flex min-h-screen gap-5 p-4 md:p-5">
+        <AppSidebar currentPage={currentPage} onNavigate={handleNavigate} />
+        <main className="min-w-0 flex-1">Main Content</main>
+      </div>
+    </div>
   );
 };
 
