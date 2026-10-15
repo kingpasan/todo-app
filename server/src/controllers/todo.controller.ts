@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import {
   createNewTodo,
+  deleteTodoById,
   getAllTodos,
   toggleStatus,
   updateExistingTodo,
@@ -49,6 +50,20 @@ export const toggleTodoStatus: RequestHandler = async (req, res, next) => {
     const todo = await toggleStatus(id);
 
     res.status(200).json({ success: true, data: todo });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteTodo: RequestHandler = async (req, res, next) => {
+  try {
+    const id = todoIdSchema.parse(req.params.id);
+    await deleteTodoById(id);
+
+    res.status(200).json({
+      success: true,
+      message: "TODO deleted successfully",
+    });
   } catch (error) {
     next(error);
   }

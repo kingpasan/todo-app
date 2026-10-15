@@ -40,10 +40,19 @@ const toggleStatus = async (id: string) => {
   return todo;
 };
 
+const deleteTodoById = async (id: string) => {
+  const todo = await Todo.findByIdAndDelete(id);
+
+  if (!todo) throw new NotFoundError();
+
+  return todo;
+};
+
 export {
   NotFoundError,
   getAllTodos,
   createNewTodo,
   updateExistingTodo,
   toggleStatus,
+  deleteTodoById,
 };
