@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type {
   CreateTodoInput,
   Page,
@@ -12,9 +12,10 @@ import SummaryCards from "@/components/SummaryCards";
 import TodoForm from "@/components/TodoForm";
 import { todoApi } from "@/services/todoApi";
 import AlertDialog from "@/components/AlertDialog";
-import { ListTodo } from "lucide-react";
+import { ListTodo, Loader } from "lucide-react";
 import TodoSortOrder from "@/components/TodoSortOrder";
 import TodoFilters from "@/components/TodoFilters";
+import TodoList from "./components/TodoList";
 
 const App = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -28,6 +29,7 @@ const App = () => {
     showAlert: boolean;
   } | null>();
   const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
+  const [loading, setLoading] = useState(true);
 
   const handleNavigate = (page: Page) => {
     setCurrentPage(page);
@@ -79,6 +81,94 @@ const App = () => {
       });
     }
   };
+
+  const visibleTodos = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
+    const filtered = todos.filter((todo) => {
+      const matchesSearch =
+        todo.title.toLowerCase().includes(query) ||
+        todo.description.toLowerCase().includes(query);
+
+      const matchesFilter =
+        filter === "All" ||
+        (filter === "Active" && !todo.done) ||
+        (filter === "Completed" && todo.done);
+      return matchesSearch && matchesFilter;
+    });
+
+    return filtered.sort((a, b) => {
+      const difference =
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+
+      return sortOrder === "newest" ? difference : -difference;
+    });
+  }, [todos, search, filter, sortOrder]);
+
+  const handleToggle = async (id: string) => {
+    try {
+      setApiError(null);
+
+      await todoApi.updateStatusDone(id);
+
+      setTodos((current) =>
+        current.map((todo) =>
+          todo._id === id ? { ...todo, done: !todo.done } : todo,
+        ),
+      );
+    } catch (error) {
+      setApiError({
+        showAlert: true,
+        title: "Mark as Done/Undone",
+        message:
+          error instanceof Error ? error.message : "Failed to update status.",
+      });
+    }
+  };
+
+  const handleDelete = async (todo: Todo) => {
+    try {
+      setApiError(null);
+
+      await todoApi.delete(todo._id);
+
+      setTodos((current) => current.filter((item) => item._id !== todo._id));
+
+      if (editingTodo?._id === todo._id) {
+        setEditingTodo(null);
+      }
+    } catch (error) {
+      setApiError({
+        showAlert: true,
+        title: "Delete Task",
+        message:
+          error instanceof Error ? error.message : "Failed to delete task.",
+      });
+    }
+  };
+
+  useEffect(() => {
+    const loadTodos = async () => {
+      try {
+        setLoading(true);
+        setApiError(null);
+
+        const result = await todoApi.getAll();
+        setTodos(result);
+      } catch (error) {
+        setApiError({
+          showAlert: true,
+          title: "Loading Task",
+          message:
+            error instanceof Error ? error.message : "Failed to load tasks.",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void loadTodos();
+  }, []);
 
   return (
     <>
@@ -134,6 +224,40 @@ const App = () => {
                   onChange={setFilter}
                   counts={counts}
                 />
+
+                {loading ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <div className="relative mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50">
+                      <Loader className="h-7 w-7 text-blue-600 animate-spin" />
+                    </div>
+
+                    <h3 className="text-base font-semibold text-slate-800">
+                      Loading your tasks
+                    </h3>
+
+                    <p className="mt-2 max-w-xs text-sm leading-6 text-slate-500">
+                      Hang tight! We're getting everything ready for you.
+                    </p>
+                  </div>
+                ) : (
+                  <TodoList
+                    todos={visibleTodos}
+                    filter={filter}
+                    onToggle={handleToggle}
+                    onEdit={setEditingTodo}
+                    onDelete={handleDelete}
+                    onClearFilters={() => {
+                      setFilter("All");
+                      setSearch("");
+                    }}
+                  />
+                )}
+
+                <div className="mt-4 border-t border-slate-100 pt-4 text-xs text-slate-400">
+                  <span>
+                    Showing {visibleTodos.length} of {todos.length} tasks
+                  </span>
+                </div>
               </section>
             </div>
           </main>
