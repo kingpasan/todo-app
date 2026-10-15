@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import todoRoutes from "./routes/todo.routes";
+import { errorHandler, notFoundHandler } from "./middleware/error.middleware";
 
 const app = express();
 const apiRouter = express.Router();
@@ -23,5 +24,7 @@ apiRouter.get("/ping", (_req, res) => {
 apiRouter.use("/todos", todoRoutes);
 
 app.use("/api", apiRouter);
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;
