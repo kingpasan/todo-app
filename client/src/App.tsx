@@ -216,10 +216,10 @@ const App = () => {
         message={apiError?.message}
       />
 
-      <div className="min-h-screen bg-[#fefef5] text-slate-900">
-        <div className="mx-auto flex min-h-screen gap-5 p-4 md:p-5">
+      <div className="h-screen overflow-hidden bg-[#fefef5] text-slate-900">
+        <div className="mx-auto flex h-full gap-5 p-4 md:p-5">
           <AppSidebar currentPage={currentPage} onNavigate={handleNavigate} />
-          <main className="min-w-0 flex-1">
+          <main className="custom-scrollbar min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4 md:px-5 md:py-5">
             <DashboardHeader search={search} onSearchChange={setSearch} />
             <SummaryCards
               total={counts.all}

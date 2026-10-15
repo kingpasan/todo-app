@@ -20,7 +20,7 @@ const navigationItems = [
 
 const AppSidebar = ({ currentPage, onNavigate }: AppSidebarProps) => {
   return (
-    <aside className="hidden w-62 shrink-0 flex-col rounded-[28px] border border-white bg-white/80 p-5 shadow-sm lg:flex">
+    <aside className="h-full shrink-0 hidden w-62 flex-col rounded-[28px] border border-white bg-white/80 p-5 shadow-sm lg:flex">
       <div className="mb-10 flex items-center gap-3 px-1">
         <div className="grid h-11 w-11 place-items-center rounded-[14px] bg-blue-600 text-white shadow-lg shadow-blue-200">
           <ListTodo className="h-7 w-7" strokeWidth={3} />
