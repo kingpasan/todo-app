@@ -1,0 +1,200 @@
+import { useState } from "react";
+import { Check, Plus, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import type { Todo, CreateTodoInput } from "@/types/todo";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+type TodoFormProps = {
+  editingTodo: Todo | null;
+  onSubmit: (data: CreateTodoInput) => void;
+  onCancel: () => void;
+};
+
+const TodoForm = ({ editingTodo, onSubmit, onCancel }: TodoFormProps) => {
+  const [title, setTitle] = useState(editingTodo?.title ?? "");
+  const [description, setDescription] = useState(
+    editingTodo?.description ?? "",
+  );
+  const [error, setError] = useState({
+    showAlert: false,
+    message: "",
+  });
+
+  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const cleanTitle = title.trim();
+    const cleanDescription = description.trim();
+
+    if (!cleanTitle) {
+      setError({ showAlert: true, message: "Please enter a task title." });
+      return;
+    }
+
+    if (cleanTitle.length > 120) {
+      setError({
+        showAlert: true,
+        message: "Title must be 120 characters or fewer.",
+      });
+
+      return;
+    }
+
+    if (cleanDescription.length > 1000) {
+      setError({
+        showAlert: true,
+        message: "Description must be 1,000 characters or fewer.",
+      });
+      return;
+    }
+
+    onSubmit({
+      title: cleanTitle,
+      description: cleanDescription,
+    });
+
+    setTitle("");
+    setDescription("");
+    setError({
+      showAlert: false,
+      message: "",
+    });
+  };
+
+  return (
+    <>
+      <Dialog
+        open={error.showAlert}
+        onOpenChange={(open) =>
+          setError((prev) => ({ ...prev, showAlert: open }))
+        }
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Something went wrong</DialogTitle>
+
+            <DialogDescription className="text-sm text-slate-500">
+              We couldn't complete your request.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div
+            role="alert"
+            className="rounded border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-700"
+          >
+            {error.message}
+          </div>
+
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" className="w-full">
+                OK
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <section className="rounded-lg border border-white bg-white p-5 shadow-sm sm:p-6">
+        <div className="mb-6 flex items-start gap-3">
+          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-blue-600 text-white shadow-md shadow-blue-200">
+            <Plus className="h-6 w-6" />
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold tracking-tight">
+              {editingTodo ? "Edit task" : "Create a New Task"}
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              {editingTodo
+                ? "Update the details of your task."
+                : "Add a new task to keep track of your work."}
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <label htmlFor="todo-title" className="text-sm font-semibold">
+              Title <span className="text-rose-500">*</span>
+            </label>
+
+            <Input
+              id="todo-title"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder="What do you need to do?"
+              maxLength={120}
+              className="h-12 rounded-xl border-slate-200 px-4"
+            />
+
+            <p className="text-right text-xs text-slate-400">
+              {title.length}/120
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="todo-description" className="text-sm font-semibold">
+              Description{" "}
+              <span className="font-normal text-slate-400">(optional)</span>
+            </label>
+
+            <Textarea
+              id="todo-description"
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              placeholder="Add more details..."
+              maxLength={1000}
+              rows={4}
+              className="min-h-28 resize-y rounded-xl border-slate-200 px-4 py-3"
+            />
+
+            <p className="text-right text-xs text-slate-400">
+              {description.length}/1000
+            </p>
+          </div>
+
+          <div className="flex gap-2">
+            {editingTodo && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onCancel}
+                className="h-12 rounded-xl"
+              >
+                <X className="mr-2 h-4 w-4" />
+                Cancel
+              </Button>
+            )}
+
+            <Button
+              type="submit"
+              className="h-12 flex-1 rounded-xl bg-blue-600 text-base font-semibold shadow-md shadow-blue-100 hover:bg-blue-700"
+            >
+              {editingTodo ? (
+                <Check className="mr-2 h-5 w-5" />
+              ) : (
+                <Plus className="mr-2 h-5 w-5" />
+              )}
+
+              {editingTodo ? "Save changes" : "Add Task"}
+            </Button>
+          </div>
+        </form>
+      </section>
+    </>
+  );
+};
+
+export default TodoForm;

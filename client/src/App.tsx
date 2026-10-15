@@ -1,12 +1,16 @@
-import { useState } from "react";
-import AppSidebar from "./components/layout/AppSidebar";
-import type { Page, TodoFilter } from "./types/todo";
-import DashboardHeader from "./components/layout/DashboardHeader";
+import { useMemo, useState } from "react";
+import type { CreateTodoInput, Page, Todo, TodoFilter } from "./types/todo";
+import AppSidebar from "@/components/layout/AppSidebar";
+import DashboardHeader from "@/components/layout/DashboardHeader";
+import SummaryCards from "@/components/SummaryCards";
+import TodoForm from "./components/TodoForm";
 
 const App = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [currentPage, setCurrentPage] = useState<Page>("tasks");
   const [filter, setFilter] = useState<TodoFilter>("All");
   const [search, setSearch] = useState("");
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
 
   const handleNavigate = (page: Page) => {
     setCurrentPage(page);
@@ -19,12 +23,38 @@ const App = () => {
       setFilter("All");
     }
   };
+
+  const counts = useMemo(
+    () => ({
+      all: todos.length,
+      active: todos.filter((todo) => !todo.done).length,
+      completed: todos.filter((todo) => todo.done).length,
+    }),
+    [todos],
+  );
+
+  const handleSave = async (data: CreateTodoInput) => {
+    console.log(data);
+  };
+
   return (
     <div className="min-h-screen bg-[#fefef5] text-slate-900">
       <div className="mx-auto flex min-h-screen gap-5 p-4 md:p-5">
         <AppSidebar currentPage={currentPage} onNavigate={handleNavigate} />
         <main className="min-w-0 flex-1">
           <DashboardHeader search={search} onSearchChange={setSearch} />
+          <SummaryCards
+            total={counts.all}
+            active={counts.active}
+            completed={counts.completed}
+          />
+          <div className="grid items-stretch gap-5 xl:grid-cols-[minmax(330px,0.78fr)_minmax(0,1.5fr)]">
+            <TodoForm
+              editingTodo={editingTodo}
+              onSubmit={handleSave}
+              onCancel={() => setEditingTodo(null)}
+            />
+          </div>
         </main>
       </div>
     </div>
