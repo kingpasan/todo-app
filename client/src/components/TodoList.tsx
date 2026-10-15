@@ -50,15 +50,23 @@ const TodoList = ({
   }
 
   return (
-    <div>
-      {todos.map((todo) => (
-        <TodoItem
+    <div className="space-y-3">
+      {todos.map((todo, index) => (
+        <div
           key={todo._id}
-          todo={todo}
-          onToggle={onToggle}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+          className="animate-in fade-in slide-in-from-bottom-2 duration-500 motion-reduce:animate-none"
+          style={{
+            animationDelay: `${Math.min(index * 70, 350)}ms`,
+            animationFillMode: "both",
+          }}
+        >
+          <TodoItem
+            todo={todo}
+            onToggle={onToggle}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        </div>
       ))}
     </div>
   );

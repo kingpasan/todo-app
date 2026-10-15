@@ -1,5 +1,6 @@
 import { ListTodo, CheckCircle2, CircleAlert } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import AnimatedNumber from "./AnimatedNumber";
 
 type SummaryCardsProps = {
   total: number;
@@ -66,7 +67,7 @@ const SummaryCards = ({ total, active, completed }: SummaryCardsProps) => {
 
               <div className="min-w-0">
                 <p className="text-2xl font-bold leading-none text-slate-900 sm:text-3xl">
-                  {stat.value}
+                  <AnimatedNumber value={stat.value} />
                 </p>
 
                 <p className="mt-2 truncate text-xs font-medium text-slate-600 sm:text-sm">
