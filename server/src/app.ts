@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import todoRoutes from "./routes/todo.routes";
 
 const app = express();
 const apiRouter = express.Router();
@@ -18,6 +19,8 @@ apiRouter.get("/ping", (_req, res) => {
     message: "Express API is running...",
   });
 });
+
+apiRouter.use("/todos", todoRoutes);
 
 app.use("/api", apiRouter);
 
