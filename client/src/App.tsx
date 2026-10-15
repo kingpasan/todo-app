@@ -11,9 +11,10 @@ import DashboardHeader from "@/components/layout/DashboardHeader";
 import SummaryCards from "@/components/SummaryCards";
 import TodoForm from "@/components/TodoForm";
 import { todoApi } from "@/services/todoApi";
-import AlertDialog from "./components/AlertDialog";
+import AlertDialog from "@/components/AlertDialog";
 import { ListTodo } from "lucide-react";
-import TodoSortOrder from "./components/TodoSortOrder";
+import TodoSortOrder from "@/components/TodoSortOrder";
+import TodoFilters from "@/components/TodoFilters";
 
 const App = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -128,6 +129,11 @@ const App = () => {
                     onValueChange={(value) => setSortOrder(value as SortOrder)}
                   />
                 </div>
+                <TodoFilters
+                  filter={filter}
+                  onChange={setFilter}
+                  counts={counts}
+                />
               </section>
             </div>
           </main>
